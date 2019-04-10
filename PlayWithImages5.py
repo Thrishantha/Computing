@@ -9,25 +9,23 @@ class PlayWithImage:
         self.img = img
         self.count = 1
 
-    def ReplacePixels(self):
-        layer = self.layer
+    def ReplacePixels(layer):
         ind = np.where(layer > 200) #Obtain all coordinates of pixels greater than this threshold value 
         rows = ind[0] #First argument of ind containing all height coordinates corresponding to this threshold
         cols = ind[1] #Second argument of ind with all width coordinates corresponding to this threshold
-        print('How many for simple? ',len(rows))
+        print('How many pixels? ',len(rows))
         layer[rows,cols] = 0
         return layer
     
-    def CreativePixels(self): #Now go mad here. Do any creative editing
+    def CreativePixels(layer): #Now go mad here. Do any creative editing
         #In this function, I will pick pixels of value greater than some threshold
         #And then I will change pixels in its neighborhood by randomly picking them
-        layer = self.layer
         S = layer.shape
         ind = np.where(layer > 200) #Obtain all coordinates of pixels greater than this threshold value 
         N = 10 #Neighborhood size
         rows = ind[0] #First argument of ind containing all height coordinates corresponding to this threshold
         cols = ind[1] #Second argument of ind with all width coordinates corresponding to this threshold
-        print('How many for creative? ',len(rows))
+        print('How many pixels for creative? ',len(rows))
         
         for i in range(len(rows)):
             r = rows[i]
@@ -39,50 +37,53 @@ class PlayWithImage:
             
         return layer
 
-    def ModifyImage(self): #Self contains M
-        NM = self.img #I assign self.M to M to make things easier for the next steps
+    def ModifyImage(self,M): #Self contains M
+        #NM = self.img #I assign self.M to M to make things easier for the next steps
+        NM = M.copy()
         S = NM.shape
         if S[2] == 3:
             for i in range(3):
-                self.layer = NM[:,:,i]
-                NM[:,:,i] = self.ReplacePixels()
+                layer = NM[:,:,i]
+                NM[:,:,i] = PlayWithImage.ReplacePixels(layer)
         else:
-            self.layer = NM
-            NM = self.ReplacePixels()
+            layer = NM
+            NM = PlayWithImage.ReplacePixels(layer)
         self.NM = NM
 
-    def MyCreative(self): #Now go mad here. Do any creative editing
+    def MyCreative(self,M): #Now go mad here. Do any creative editing
         #In this method, I will pick pixels of value greater than some threshold
         #And then I will change pixels in its neighborhood by randomly picking them
-        CM = self.img #I assign self.M to M to make things easier for the next steps
+        #CM = self.img #I assign self.M to M to make things easier for the next steps
+        CM = M.copy()
         S = CM.shape
         if S[2] == 3:
             for i in range(3):
-                self.layer = CM[:,:,i]
-                CM[:,:,i] = self.CreativePixels()
+                layer = CM[:,:,i]
+                CM[:,:,i] = PlayWithImage.CreativePixels(layer)
         else:
-            self.layer = CM
-            CM = self.CreativePixels()
+            layer = CM
+            CM = PlayWithImage.CreativePixels(layer)
         self.CM = CM
 
-    def plotoriginal(self):
-        plot_image_matplotlib(self.img,'Original')
+    def plotoriginal(self,img):
+        plot_image_matplotlib(img,'Original')
 
-    def plotsimplemodify(self):
-        self.ModifyImage()
+    def plotsimplemodify(self,img):
+        self.ModifyImage(img)
         plot_image_matplotlib(self.NM,'Simple')
         
-    def plotcreativemodify(self):
-        self.MyCreative()
+    def plotcreativemodify(self,img):
+        self.MyCreative(img)
         plot_image_matplotlib(self.CM,'Creative')
             
-img = cv2.imread('IMG_1562.jpg') #imread is a method in cv2 module to load an image
+photo = cv2.imread('IMG_1562.jpg') #imread is a method in cv2 module to load an image
 
-simple = PlayWithImage(img)
-simple.plotoriginal()
-simple.plotcreativemodify()
-simple.plotsimplemodify()
-simple.plotoriginal()
+simple = PlayWithImage(photo)
 
+simple.plotoriginal(photo)
+simple.plotcreativemodify(photo)
+simple.plotsimplemodify(photo)
+simple.plotoriginal(photo)
+plt.show()
 
 
