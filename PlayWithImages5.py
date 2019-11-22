@@ -76,7 +76,7 @@ class PlayWithImage:
         self.MyCreative(img)
         plot_image_matplotlib(self.CM,'Creative')
             
-photo = cv2.imread('IMG_1562.jpg') #imread is a method in cv2 module to load an image
+photo = cv2.imread('amma.jpg') #imread is a method in cv2 module to load an image
 
 simple = PlayWithImage(photo)
 
